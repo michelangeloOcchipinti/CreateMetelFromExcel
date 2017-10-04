@@ -2,14 +2,18 @@ package application;
 
 import javafx.application.*;
 import javafx.stage.*;
+import javafx.stage.FileChooser;
 import javafx.scene.*;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
 import java.io.*;
 import javafx.event.*;
 import javafx.geometry.*;
+import java.awt.Desktop;
 
 public class Metel extends Application{
+	
+	private Desktop desktop = Desktop.getDesktop();
 	
 	private Label lbl_instruction;
 	private Label lbl_date_start;
@@ -21,6 +25,7 @@ public class Metel extends Application{
 	private Label lbl_confirmation;
 	private Label lbl_brand;
 	private RadioButton bot, kai;
+	private FileChooser fileChooser = new FileChooser();
 	
 	
 	public static void main(String args[]) {
@@ -44,15 +49,15 @@ public class Metel extends Application{
 		
 		lbl_date_start = new Label("Inserisci la data di decorrenza:");
 		date_start = new TextField();
-		date_start.setPromptText("Inserisci la data di decorrenza");
-		date_start.setMinWidth(157);
+		date_start.setPromptText("DD/MM/AAAA");
+		date_start.setMinWidth(160);
 		
 		lbl_num_catalogue = new Label("Inserisci il numero di catalogo:");
 		num_catalogue = new TextField();
-		num_catalogue.setPromptText("Inserisci il numero consecutivo di catalogo");
-		num_catalogue.setMinWidth(150);
+		//num_catalogue.setPromptText("Inserisci il numero consecutivo di catalogo");
+		num_catalogue.setMinWidth(160);
 		
-		lbl_brand = new Label("Inserisci il produttore");
+		lbl_brand = new Label("Scegli il produttore:");
 		
 		HBox instruction = new HBox();
 		instruction.getChildren().addAll(lbl_instruction);
@@ -76,12 +81,36 @@ public class Metel extends Application{
 		bot.setToggleGroup(brandRadioButton);
 		kai.setToggleGroup(brandRadioButton);
 		
+		btn_take_excel = new Button("Aggiungi Excel");
+		btn_make_metel = new Button("Crea Metel");
+		btn_take_excel.setMinWidth(160);
+		btn_make_metel.setMinWidth(160);
+		btn_take_excel.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent e) {
+				File fileExcel = fileChooser.showOpenDialog(myStage);
+				/*if (fileExcel!=null) {
+					try {
+					desktop.open(fileExcel);
+					}
+					catch(IOException h) {
+						System.out.println("Impossibile aprire il file!");
+					}
+				}*/
+			}
+		});
+		
 		FlowPane paneForTextFieldsAndLabels = new FlowPane(Orientation.HORIZONTAL,
-				20, 5, lbl_date_start, lbl_num_catalogue, lbl_brand, date_start, num_catalogue,  bot, kai);
-		paneForTextFieldsAndLabels.setMaxWidth(2000);
-		paneForTextFieldsAndLabels.setMinWidth(600);
-		paneForTextFieldsAndLabels.setMargin(bot, new Insets(15));
-		paneForTextFieldsAndLabels.setMargin(kai, new Insets(-25));
+				20, 5, lbl_date_start, lbl_num_catalogue, lbl_brand, date_start, num_catalogue,  bot, kai, btn_take_excel, btn_make_metel);
+		paneForTextFieldsAndLabels.setMaxWidth(1000);
+		paneForTextFieldsAndLabels.setMinWidth(500);
+		
+		paneForTextFieldsAndLabels.setMargin(bot, new Insets(0));
+		paneForTextFieldsAndLabels.setMargin(kai, new Insets(0,0,0,-10));
+		paneForTextFieldsAndLabels.setMargin(btn_take_excel, new Insets(20,0,0,-2));
+		paneForTextFieldsAndLabels.setMargin(btn_make_metel, new Insets(20,0,0,2));
+		
+		
+		
 		
 		BorderPane mainPane = new BorderPane();
 		mainPane.setTop(instruction);
@@ -90,6 +119,8 @@ public class Metel extends Application{
 		
 		
 		Scene scene1 = new Scene(mainPane, 520, 500);
+		
+		btn_take_excel.requestFocus();
 		
 		myStage.setTitle("Create Metel by Bot Lighting Srl");
 		myStage.setScene(scene1);
