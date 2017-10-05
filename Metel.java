@@ -10,11 +10,16 @@ import java.io.*;
 import javafx.event.*;
 import javafx.geometry.*;
 import java.awt.Desktop;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import java.util.Iterator;
 
-public class Metel extends Application{
+public class Metel extends Application implements EventHandler<ActionEvent>{
 	
 	private Desktop desktop = Desktop.getDesktop();
-	
 	private Label lbl_instruction;
 	private Label lbl_date_start;
 	private TextField date_start;
@@ -26,6 +31,11 @@ public class Metel extends Application{
 	private Label lbl_brand;
 	private RadioButton bot, kai;
 	private FileChooser fileChooser = new FileChooser();
+	private File fileExcel;
+	private PrintWriter fileMetel =null;
+	private FileInputStream fIP;
+	private XSSFWorkbook workbook;
+	static XSSFRow row;
 	
 	
 	public static void main(String args[]) {
@@ -83,11 +93,12 @@ public class Metel extends Application{
 		
 		btn_take_excel = new Button("Aggiungi Excel");
 		btn_make_metel = new Button("Crea Metel");
+		btn_make_metel.setOnAction(this);
 		btn_take_excel.setMinWidth(160);
 		btn_make_metel.setMinWidth(160);
 		btn_take_excel.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
-				File fileExcel = fileChooser.showOpenDialog(myStage);
+				fileExcel = fileChooser.showOpenDialog(myStage);
 				/*if (fileExcel!=null) {
 					try {
 					desktop.open(fileExcel);
@@ -109,22 +120,58 @@ public class Metel extends Application{
 		paneForTextFieldsAndLabels.setMargin(btn_take_excel, new Insets(20,0,0,-2));
 		paneForTextFieldsAndLabels.setMargin(btn_make_metel, new Insets(20,0,0,2));
 		
-		
+		lbl_confirmation = new Label("Prova label");
 		
 		
 		BorderPane mainPane = new BorderPane();
 		mainPane.setTop(instruction);
 		mainPane.setLeft(paneForTextFieldsAndLabels);
+		mainPane.setBottom(lbl_confirmation);
+		mainPane.setAlignment(lbl_confirmation, Pos.TOP_CENTER);
+		mainPane.setMargin(lbl_confirmation, new Insets(0,0,100,0));
 		mainPane.setMargin(paneForTextFieldsAndLabels, new Insets(25));
+		
 		
 		
 		Scene scene1 = new Scene(mainPane, 520, 500);
 		
 		btn_take_excel.requestFocus();
 		
-		myStage.setTitle("Create Metel by Bot Lighting Srl");
 		myStage.setScene(scene1);
 		myStage.show();
 	}
 	
-}
+	public void handle(ActionEvent e) {
+		try {
+		fileMetel = new PrintWriter("metel.TXT");
+		}
+		catch(FileNotFoundException f) {
+			lbl_confirmation.setText("Non è stato possibile creare o scrivere nel file Metel");
+		}
+		try {
+		 fIP = new FileInputStream(fileExcel.getPath());
+		}
+		catch(FileNotFoundException g) {
+			lbl_confirmation.setText("Non è stato possibile creare o scrivere nel file Excel");
+		}
+		try {
+			workbook = new XSSFWorkbook(fIP);
+			}
+			catch(IOException g) {
+				lbl_confirmation.setText("Non è stato possibile creare o scrivere nel file Excel");
+			} 
+		XSSFSheet spreadsheet = workbook.getSheetAt(0);
+		Iterator < Row > rowIterator = spreadsheet.iterator(); 
+		 while (rowIterator.hasNext()) {
+	         row = (XSSFRow) rowIterator.next();
+	         Iterator < Cell >  cellIterator = row.cellIterator();
+	         
+	         while ( cellIterator.hasNext()) {
+	            Cell cell = cellIterator.next();
+	            lbl_confirmation.setText(cell.getStringCellValue()+"\n");
+	            }
+	         }
+	         System.out.println();
+	      }
+	}
+	
