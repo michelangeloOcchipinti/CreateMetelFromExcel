@@ -11,6 +11,7 @@ import javafx.event.*;
 import javafx.geometry.*;
 import java.awt.Desktop;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -32,10 +33,11 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
 	private RadioButton bot, kai;
 	private FileChooser fileChooser = new FileChooser();
 	private File fileExcel;
-	private PrintWriter fileMetel =null;
+	private PrintWriter fileMetel;
 	private FileInputStream fIP;
 	private XSSFWorkbook workbook;
 	static XSSFRow row;
+
 	
 	
 	public static void main(String args[]) {
@@ -164,14 +166,30 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
 		Iterator < Row > rowIterator = spreadsheet.iterator(); 
 		 while (rowIterator.hasNext()) {
 	         row = (XSSFRow) rowIterator.next();
+	         fileMetel.println("A capo");
 	         Iterator < Cell >  cellIterator = row.cellIterator();
-	         
 	         while ( cellIterator.hasNext()) {
 	            Cell cell = cellIterator.next();
-	            lbl_confirmation.setText(cell.getStringCellValue()+"\n");
+	            //lbl_confirmation.setText(cell.getStringCellValue()+"\n");
+	            try {
+	            	fileMetel = new PrintWriter(new BufferedWriter(new FileWriter("metel.TXT", true)));
+	            	if (cell.getCellTypeEnum() == CellType.STRING) {
+	            		fileMetel.print(cell.getStringCellValue());
+                    } else if (cell.getCellTypeEnum() == CellType.NUMERIC) {
+                    	fileMetel.print(cell.getNumericCellValue()); 
+                    }
+	            	fileMetel.flush();
+	            	
 	            }
+	            catch(IOException h) {
+	            	System.out.println(h);
+	            }
+	            }
+	         fileMetel.println();
+	         fileMetel.close();
 	         }
-	         System.out.println();
+		
+	         
 	      }
 	}
 	
