@@ -168,23 +168,80 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
 	         row = (XSSFRow) rowIterator.next();
 	         fileMetel.println("A capo");
 	         Iterator < Cell >  cellIterator = row.cellIterator();
+	         int index=0;
+	         String[] cells = new String[6];
 	         while ( cellIterator.hasNext()) {
 	            Cell cell = cellIterator.next();
+	            Row intestazione = spreadsheet.getRow(0);
 	            //lbl_confirmation.setText(cell.getStringCellValue()+"\n");
 	            try {
 	            	fileMetel = new PrintWriter(new BufferedWriter(new FileWriter("metel.TXT", true)));
-	            	if (cell.getCellTypeEnum() == CellType.STRING) {
+	            	String cellaIntestazione = String.valueOf(intestazione.getCell(index));
+	            	switch(cellaIntestazione) {
+	            		case "Cod_Articolo":
+	            			if (cell.getCellTypeEnum() == CellType.STRING) {
+	            				cells[0]=cell.getStringCellValue();
+	            			} else if (cell.getCellTypeEnum() == CellType.NUMERIC) {
+	            				cells[0]=String.valueOf(cell.getNumericCellValue());
+	            			}
+	            			break;
+	            		case "Barcode":
+	            			if (cell.getCellTypeEnum() == CellType.STRING) {
+	            				cells[1]=cell.getStringCellValue();
+	            			} else if (cell.getCellTypeEnum() == CellType.NUMERIC) {
+	            				cells[1]=String.valueOf(cell.getNumericCellValue());
+	            			}
+	            			break;
+	            		case "Descri_Articolo":
+	            			if (cell.getCellTypeEnum() == CellType.STRING) {
+	            				cells[2]=cell.getStringCellValue();
+	            			} else if (cell.getCellTypeEnum() == CellType.NUMERIC) {
+	            				cells[2]=String.valueOf(cell.getNumericCellValue());
+	            			}
+	            			break;
+	            		case "Pz_x_Conf":
+	            			if (cell.getCellTypeEnum() == CellType.STRING) {
+	            				cells[3]=cell.getStringCellValue();
+	            			} else if (cell.getCellTypeEnum() == CellType.NUMERIC) {
+	            				cells[3]=String.valueOf(cell.getNumericCellValue());
+	            			}
+	            			break;
+	            		case "Prezzo":
+	            			if (cell.getCellTypeEnum() == CellType.STRING) {
+	            				cells[4]=cell.getStringCellValue();
+	            			} else if (cell.getCellTypeEnum() == CellType.NUMERIC) {
+	            				cells[4]=String.valueOf(cell.getNumericCellValue());
+	            			}
+	            			break;
+	            		case "Famiglia":
+	            			if (cell.getCellTypeEnum() == CellType.STRING) {
+	            				cells[5]=cell.getStringCellValue();
+	            			} else if (cell.getCellTypeEnum() == CellType.NUMERIC) {
+	            				cells[5]=String.valueOf(cell.getNumericCellValue());
+	            			}
+	            			break;
+	            		}
+
+	            	/*if (cell.getCellTypeEnum() == CellType.STRING) {
 	            		fileMetel.print(cell.getStringCellValue());
                     } else if (cell.getCellTypeEnum() == CellType.NUMERIC) {
                     	fileMetel.print(cell.getNumericCellValue()); 
-                    }
+                    }*/
+	            	
+	            	
 	            	fileMetel.flush();
 	            	
 	            }
 	            catch(IOException h) {
 	            	System.out.println(h);
 	            }
+	            index++;
 	            }
+	         index=0;
+	         for (int i=0; i<cells.length;i++) {
+         		fileMetel.print(cells[i]);
+         	}
+	         System.out.println();
 	         fileMetel.println();
 	         fileMetel.close();
 	         }
