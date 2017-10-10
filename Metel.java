@@ -37,6 +37,7 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
 	private FileInputStream fIP;
 	private XSSFWorkbook workbook;
 	static XSSFRow row;
+	private int first, second, third, fourth, fifth, sixt, seventh, TrueFalseOnCatalogue;
 
 	
 	
@@ -56,17 +57,18 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
 				+ "	• Barcode\n"
 				+ "	• Descri_Articolo\n"
 				+ "	• Pz_x_Conf\n"
+				+ "	• Stato\n"
 				+ "	• Prezzo\n"
-				+ "	• Famiglia\n");
+				+ "	• Cod_FW\n");
 		
-		lbl_date_start = new Label("Inserisci la data di decorrenza:");
+		lbl_date_start = new Label("Inserisci la data inizio catalogo:");
 		date_start = new TextField();
-		date_start.setPromptText("DD/MM/AAAA");
+		date_start.setPromptText("DDMMAAAA");
 		date_start.setMinWidth(160);
 		
 		lbl_num_catalogue = new Label("Inserisci il numero di catalogo:");
 		num_catalogue = new TextField();
-		//num_catalogue.setPromptText("Inserisci il numero consecutivo di catalogo");
+		num_catalogue.setPromptText("Tre cifre es: 021");
 		num_catalogue.setMinWidth(160);
 		
 		lbl_brand = new Label("Scegli il produttore:");
@@ -163,10 +165,75 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
 				lbl_confirmation.setText("Non è stato possibile creare o scrivere nel file Excel");
 			} 
 		XSSFSheet spreadsheet = workbook.getSheetAt(0);
-		Iterator < Row > rowIterator = spreadsheet.iterator(); 
+		Row heading = spreadsheet.getRow(0);
+		Iterator < Cell > rowZeroIterator = heading.cellIterator();
+		int index = 0;
+		while (rowZeroIterator.hasNext()) {
+			Cell cellZero = rowZeroIterator.next();
+			switch (String.valueOf(heading.getCell(index))) {
+				case "Cod_Articolo":
+					first = cellZero.getColumnIndex();
+					break;
+				case "Barcode":
+					second = cellZero.getColumnIndex();	
+					break;
+				case "Descri_Articolo":
+					third = cellZero.getColumnIndex();
+					break;
+				case "Pz_x_Conf":
+					fourth = cellZero.getColumnIndex();
+					break;
+				case "Prezzo":
+					fifth = cellZero.getColumnIndex();
+					break;
+				case "Stato":
+					sixt = cellZero.getColumnIndex();
+					break;
+				case "Cod_FW":
+					seventh = cellZero.getColumnIndex();
+					break;
+				case "CatalogoWeb":
+					TrueFalseOnCatalogue = cellZero.getColumnIndex();
+					break;
+    			}
+			index++;
+			}	
+		 try {
+         	fileMetel = new PrintWriter(new BufferedWriter(new FileWriter("metel.TXT", true)));
+         	if (num_catalogue!=null && date_start!= null) {
+         		fileMetel.print("LISTINO METEL       BTL01733730285BTL   "+date_start.getText()+date_start.getText()+"LISTINO GENERALE                                                     "
+         	+num_catalogue.getText()+"                                                                                                         ");
+         		fileMetel.flush();
+         		fileMetel.println();
+         	}
+         	else {
+         		
+         	}
+         	Iterator < Row > rowIterator = spreadsheet.iterator();
+         	while (rowIterator.hasNext()) {
+         		row = (XSSFRow) rowIterator.next();
+         		if (String.valueOf(row.getCell(TrueFalseOnCatalogue)).equals("TRUE")) {
+         			System.out.println(String.valueOf(row.getCell(first))+String.valueOf(row.getCell(second)+String.valueOf(row.getCell(third))+String.valueOf(row.getCell(fourth))+String.valueOf(row.getCell(fifth))+String.valueOf(row.getCell(sixt))+String.valueOf(row.getCell(seventh))+String.valueOf(row.getCell(TrueFalseOnCatalogue))));
+         			fileMetel.print(String.valueOf(row.getCell(first))+String.valueOf(row.getCell(second)+String.valueOf(row.getCell(third))+String.valueOf(row.getCell(fourth))+String.valueOf(row.getCell(fifth))+String.valueOf(row.getCell(sixt))+String.valueOf(row.getCell(seventh))+String.valueOf(row.getCell(TrueFalseOnCatalogue))));
+         			fileMetel.flush();
+         			fileMetel.println();
+         		}
+         	}
+         	
+		 }
+		 catch(IOException h) {
+         	System.out.println(h);
+         }
+		 
+		 fileMetel.close();
+
+	}
+	
+			
+	/*Iterator < Row > rowIterator = spreadsheet.iterator();
+		
 		 while (rowIterator.hasNext()) {
 	         row = (XSSFRow) rowIterator.next();
-	         fileMetel.println("A capo");
 	         Iterator < Cell >  cellIterator = row.cellIterator();
 	         int index=0;
 	         String[] cells = new String[6];
@@ -222,13 +289,6 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
 	            			break;
 	            		}
 
-	            	/*if (cell.getCellTypeEnum() == CellType.STRING) {
-	            		fileMetel.print(cell.getStringCellValue());
-                    } else if (cell.getCellTypeEnum() == CellType.NUMERIC) {
-                    	fileMetel.print(cell.getNumericCellValue()); 
-                    }*/
-	            	
-	            	
 	            	fileMetel.flush();
 	            	
 	            }
@@ -244,9 +304,9 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
 	         System.out.println();
 	         fileMetel.println();
 	         fileMetel.close();
-	         }
+	         }*/
 		
 	         
 	      }
-	}
+	
 	
