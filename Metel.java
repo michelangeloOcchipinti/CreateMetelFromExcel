@@ -18,6 +18,8 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.util.Iterator;
 
+
+
 public class Metel extends Application implements EventHandler<ActionEvent>{
 	
 	private Desktop desktop = Desktop.getDesktop();
@@ -37,7 +39,8 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
 	private FileInputStream fIP;
 	private XSSFWorkbook workbook;
 	static XSSFRow row;
-	private int first, second, third, fourth, fifth, sixt, seventh, TrueFalseOnCatalogue;
+	private String first=" ", second="  ", third="   ", fourth="    ", fifth="     ", sixt="      ", seventh="       ", eight="        ";
+	
 
 	
 	
@@ -51,23 +54,17 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
 	public void start(Stage myStage) {
 		
 		lbl_instruction = new Label();
-		lbl_instruction.setText("\n	Benvenuti nel programma Create Metel di Bot Lighting Srl.\n\n"
-				+ "	Il file excel che verrà caricato dovra' avere le seguenti colonne con i relativi titoli:\n\n "
-				+ "	• Cod_Articolo\n"
-				+ "	• Barcode\n"
-				+ "	• Descri_Articolo\n"
-				+ "	• Pz_x_Conf\n"
-				+ "	• Stato\n"
-				+ "	• Prezzo\n"
-				+ "	• Cod_FW\n");
+		lbl_instruction.setText("\n	Benvenuti nel programma Create Metel di Bot Lighting Srl.");
 		
 		lbl_date_start = new Label("Inserisci la data inizio catalogo:");
 		date_start = new TextField();
+		date_start.setText(null);
 		date_start.setPromptText("DDMMAAAA");
 		date_start.setMinWidth(160);
 		
 		lbl_num_catalogue = new Label("Inserisci il numero di catalogo:");
 		num_catalogue = new TextField();
+		num_catalogue.setText(null);
 		num_catalogue.setPromptText("Tre cifre es: 021");
 		num_catalogue.setMinWidth(160);
 		
@@ -146,78 +143,54 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
 	}
 	
 	public void handle(ActionEvent e) {
-		try {
-		fileMetel = new PrintWriter("metel.TXT");
-		}
-		catch(FileNotFoundException f) {
-			lbl_confirmation.setText("Non è stato possibile creare o scrivere nel file Metel");
-		}
-		try {
-		 fIP = new FileInputStream(fileExcel.getPath());
-		}
-		catch(FileNotFoundException g) {
-			lbl_confirmation.setText("Non è stato possibile creare o scrivere nel file Excel");
-		}
-		try {
-			workbook = new XSSFWorkbook(fIP);
-			}
-			catch(IOException g) {
-				lbl_confirmation.setText("Non è stato possibile creare o scrivere nel file Excel");
-			} 
-		XSSFSheet spreadsheet = workbook.getSheetAt(0);
-		Row heading = spreadsheet.getRow(0);
-		Iterator < Cell > rowZeroIterator = heading.cellIterator();
-		int index = 0;
-		while (rowZeroIterator.hasNext()) {
-			Cell cellZero = rowZeroIterator.next();
-			switch (String.valueOf(heading.getCell(index))) {
-				case "Cod_Articolo":
-					first = cellZero.getColumnIndex();
-					break;
-				case "Barcode":
-					second = cellZero.getColumnIndex();	
-					break;
-				case "Descri_Articolo":
-					third = cellZero.getColumnIndex();
-					break;
-				case "Pz_x_Conf":
-					fourth = cellZero.getColumnIndex();
-					break;
-				case "Prezzo":
-					fifth = cellZero.getColumnIndex();
-					break;
-				case "Stato":
-					sixt = cellZero.getColumnIndex();
-					break;
-				case "Cod_FW":
-					seventh = cellZero.getColumnIndex();
-					break;
-				case "CatalogoWeb":
-					TrueFalseOnCatalogue = cellZero.getColumnIndex();
-					break;
-    			}
-			index++;
-			}	
+		
+		
 		 try {
-         	fileMetel = new PrintWriter(new BufferedWriter(new FileWriter("metel.TXT", true)));
-         	if (num_catalogue!=null && date_start!= null) {
+			 
+         	if (num_catalogue.getText()!=null && date_start.getText()!=null) {
+         		try {
+         			fileMetel = new PrintWriter("metel.TXT");
+         			}
+         			catch(FileNotFoundException f) {
+         				lbl_confirmation.setText("Non è stato possibile creare o scrivere nel file Metel");
+         			}
+         			try {
+         			 fIP = new FileInputStream(fileExcel.getPath());
+         			}
+         			catch(FileNotFoundException g) {
+         				lbl_confirmation.setText("Non è stato possibile creare o scrivere nel file Excel");
+         			}
+         			try {
+         				workbook = new XSSFWorkbook(fIP);
+         				}
+         				catch(IOException g) {
+         					lbl_confirmation.setText("Non è stato possibile creare o scrivere nel file Excel");
+         				} 
+         			XSSFSheet spreadsheet = workbook.getSheetAt(0);
+         			Row heading = spreadsheet.getRow(0);
+         		fileMetel = new PrintWriter(new BufferedWriter(new FileWriter("metel.TXT", true)));
          		fileMetel.print("LISTINO METEL       BTL01733730285BTL   "+date_start.getText()+date_start.getText()+"LISTINO GENERALE                                                     "
          	+num_catalogue.getText()+"                                                                                                         ");
          		fileMetel.flush();
          		fileMetel.println();
-         	}
-         	else {
-         		
-         	}
+         	
+         	
          	Iterator < Row > rowIterator = spreadsheet.iterator();
          	while (rowIterator.hasNext()) {
          		row = (XSSFRow) rowIterator.next();
-         		if (String.valueOf(row.getCell(TrueFalseOnCatalogue)).equals("TRUE")) {
-         			System.out.println(String.valueOf(row.getCell(first))+String.valueOf(row.getCell(second)+String.valueOf(row.getCell(third))+String.valueOf(row.getCell(fourth))+String.valueOf(row.getCell(fifth))+String.valueOf(row.getCell(sixt))+String.valueOf(row.getCell(seventh))+String.valueOf(row.getCell(TrueFalseOnCatalogue))));
-         			fileMetel.print(String.valueOf(row.getCell(first))+String.valueOf(row.getCell(second)+String.valueOf(row.getCell(third))+String.valueOf(row.getCell(fourth))+String.valueOf(row.getCell(fifth))+String.valueOf(row.getCell(sixt))+String.valueOf(row.getCell(seventh))+String.valueOf(row.getCell(TrueFalseOnCatalogue))));
+         		
+         			//System.out.println(String.valueOf(row.getCell(first))+String.valueOf(row.getCell(second)+String.valueOf(row.getCell(third))+String.valueOf(row.getCell(fourth))+String.valueOf(row.getCell(fifth))+String.valueOf(row.getCell(sixt))+String.valueOf(row.getCell(seventh))+String.valueOf(row.getCell(TrueFalseOnCatalogue))));
+         			fileMetel.print(String.valueOf(row.getCell(0))+String.valueOf(row.getCell(1)+String.valueOf(row.getCell(2))+String.valueOf(row.getCell(3))+String.valueOf(row.getCell(4))+String.valueOf(row.getCell(5))+String.valueOf(row.getCell(6))+String.valueOf(row.getCell(7))));
          			fileMetel.flush();
          			fileMetel.println();
-         		}
+         			lbl_confirmation.setText("File Metel.TXT creato correttamente");
+         	}
+         	
+         	}
+         	
+         	else {
+         		lbl_confirmation.setText("Mancano la data oppure il numero di catalogo");
+         		
          	}
          	
 		 }
@@ -230,83 +203,7 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
 	}
 	
 			
-	/*Iterator < Row > rowIterator = spreadsheet.iterator();
-		
-		 while (rowIterator.hasNext()) {
-	         row = (XSSFRow) rowIterator.next();
-	         Iterator < Cell >  cellIterator = row.cellIterator();
-	         int index=0;
-	         String[] cells = new String[6];
-	         while ( cellIterator.hasNext()) {
-	            Cell cell = cellIterator.next();
-	            Row intestazione = spreadsheet.getRow(0);
-	            //lbl_confirmation.setText(cell.getStringCellValue()+"\n");
-	            try {
-	            	fileMetel = new PrintWriter(new BufferedWriter(new FileWriter("metel.TXT", true)));
-	            	String cellaIntestazione = String.valueOf(intestazione.getCell(index));
-	            	switch(cellaIntestazione) {
-	            		case "Cod_Articolo":
-	            			if (cell.getCellTypeEnum() == CellType.STRING) {
-	            				cells[0]=cell.getStringCellValue();
-	            			} else if (cell.getCellTypeEnum() == CellType.NUMERIC) {
-	            				cells[0]=String.valueOf(cell.getNumericCellValue());
-	            			}
-	            			break;
-	            		case "Barcode":
-	            			if (cell.getCellTypeEnum() == CellType.STRING) {
-	            				cells[1]=cell.getStringCellValue();
-	            			} else if (cell.getCellTypeEnum() == CellType.NUMERIC) {
-	            				cells[1]=String.valueOf(cell.getNumericCellValue());
-	            			}
-	            			break;
-	            		case "Descri_Articolo":
-	            			if (cell.getCellTypeEnum() == CellType.STRING) {
-	            				cells[2]=cell.getStringCellValue();
-	            			} else if (cell.getCellTypeEnum() == CellType.NUMERIC) {
-	            				cells[2]=String.valueOf(cell.getNumericCellValue());
-	            			}
-	            			break;
-	            		case "Pz_x_Conf":
-	            			if (cell.getCellTypeEnum() == CellType.STRING) {
-	            				cells[3]=cell.getStringCellValue();
-	            			} else if (cell.getCellTypeEnum() == CellType.NUMERIC) {
-	            				cells[3]=String.valueOf(cell.getNumericCellValue());
-	            			}
-	            			break;
-	            		case "Prezzo":
-	            			if (cell.getCellTypeEnum() == CellType.STRING) {
-	            				cells[4]=cell.getStringCellValue();
-	            			} else if (cell.getCellTypeEnum() == CellType.NUMERIC) {
-	            				cells[4]=String.valueOf(cell.getNumericCellValue());
-	            			}
-	            			break;
-	            		case "Famiglia":
-	            			if (cell.getCellTypeEnum() == CellType.STRING) {
-	            				cells[5]=cell.getStringCellValue();
-	            			} else if (cell.getCellTypeEnum() == CellType.NUMERIC) {
-	            				cells[5]=String.valueOf(cell.getNumericCellValue());
-	            			}
-	            			break;
-	            		}
-
-	            	fileMetel.flush();
-	            	
-	            }
-	            catch(IOException h) {
-	            	System.out.println(h);
-	            }
-	            index++;
-	            }
-	         index=0;
-	         for (int i=0; i<cells.length;i++) {
-         		fileMetel.print(cells[i]);
-         	}
-	         System.out.println();
-	         fileMetel.println();
-	         fileMetel.close();
-	         }*/
-		
-	         
+		         
 	      }
 	
 	
