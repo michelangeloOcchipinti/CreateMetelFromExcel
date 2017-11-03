@@ -187,10 +187,43 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
          		else {
          			fileMetel.print("KBT");
          		}
-         		/*if (String.valueOf(row.getCell(0)).length()<14){
+         		Cell cell=row.getCell(0);
+         		String s1=cell.toString();
+         		
+         		if (s1.length()<16){
+         			while (s1.length()<16){
+         				s1=s1+" ";
+         			}
          			
-         		}*/
-         		fileMetel.print(String.valueOf(row.getCell(0))+String.valueOf(row.getCell(1)+String.valueOf(row.getCell(2))+String.valueOf(row.getCell(3))+String.valueOf(row.getCell(4))+String.valueOf(row.getCell(5))+String.valueOf(row.getCell(6))+String.valueOf(row.getCell(7))));
+         		}
+         		else {
+         			s1=s1.substring(0, 15);
+         		}
+         		
+         		fileMetel.print(s1);
+         		
+         		cell=row.getCell(1);
+         		s1=cell.toString();
+         		if (s1.length()>1) {
+         			if (s1.substring(1,2).equals(".")) {
+         				s1=s1.substring(0,1)+s1.substring(2);
+         			}
+         		}
+         		if (s1.length()<13){
+         			while (s1.length()<13){
+         				s1=s1+" ";
+         			}
+         			
+         		}
+         		else {
+         			s1=s1.substring(0, 13);
+         		}
+         		System.out.println(s1);;
+         		fileMetel.print(s1);
+         		
+         		
+         		
+         		fileMetel.print(String.valueOf(row.getCell(2))+String.valueOf(row.getCell(3))+String.valueOf(row.getCell(4))+String.valueOf(row.getCell(5))+String.valueOf(row.getCell(6))+String.valueOf(row.getCell(7)));
          		fileMetel.flush();
          		fileMetel.println();
          		
