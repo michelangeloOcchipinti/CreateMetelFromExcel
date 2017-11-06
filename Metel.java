@@ -12,6 +12,7 @@ import javafx.geometry.*;
 import java.awt.Desktop;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -59,7 +60,7 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
 				+ "\n        • Codice prodotto\n"
 				+ "        • EAN\n"
 				+ "        • Descrizione\n"
-				+ "        • Q'tà massima ordine\n"
+				+ "        • Q'tà cartone\n"
 				+ "        • Prezzo al rivenditore\n"
 				+ "        • Stato prodotto\n"
 				+ "        • Famiglia di sconto\n"
@@ -172,14 +173,22 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
          			XSSFSheet spreadsheet = workbook.getSheetAt(0);
          			Row heading = spreadsheet.getRow(0);
          		fileMetel = new PrintWriter(new BufferedWriter(new FileWriter("metel.TXT", true)));
-         		fileMetel.print("LISTINO METEL       BTL01733730285BTL   "+date_start.getText()+date_start.getText()+"LISTINO GENERALE                                                     "
-         						+num_catalogue.getText()+"                                                                                                         ");
+         		
+         		if (bot.isSelected()) {
+         			fileMetel.print("LISTINO METEL       BTL01733730285BTL   "+date_start.getText()+date_start.getText()+"LISTINO GENERALE                                                     "
+     						+num_catalogue.getText()+"                                                                                                         ");
+         		}
+         		else {
+         			fileMetel.print("LISTINO METEL       KBT01733730285BTL   "+date_start.getText()+date_start.getText()+"LISTINO GENERALE                                                     "
+     						+num_catalogue.getText()+"                                                                                                         ");
+         		}
          		fileMetel.flush();
          		fileMetel.println();
          		
          	
          	Iterator < Row > rowIterator = spreadsheet.iterator();
          	while (rowIterator.hasNext()) {
+         		DataFormatter df=new DataFormatter();
          		row = (XSSFRow) rowIterator.next();
          		if (bot.isSelected()) {
          			fileMetel.print("BTL");
@@ -187,8 +196,7 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
          		else {
          			fileMetel.print("KBT");
          		}
-         		Cell cell=row.getCell(0);
-         		String s1=cell.toString();
+         		String s1=df.formatCellValue(row.getCell(0));
          		
          		if (s1.length()<16){
          			while (s1.length()<16){
@@ -202,8 +210,7 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
          		
          		fileMetel.print(s1);
          		
-         		cell=row.getCell(1);
-         		s1=cell.toString();
+         		s1=df.formatCellValue(row.getCell(1));
          		if (s1.length()>1) {
          			if (s1.substring(1,2).equals(".")) {
          				s1=s1.substring(0,1)+s1.substring(2);
@@ -217,13 +224,34 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
          		}
          		else {
          			s1=s1.substring(0, 13);
-         		}
-         		System.out.println(s1);;
+         		}         		
          		fileMetel.print(s1);
          		
+         		s1=df.formatCellValue(row.getCell(2));
+         		if (s1.length()<43){
+         			while (s1.length()<43){
+         				s1=s1+" ";
+         			}
+         			
+         		}
+         		else {
+         			s1=s1.substring(0, 43);
+         		}         		
+         		fileMetel.print(s1);
          		
+         		s1=df.formatCellValue(row.getCell(3));
+         		if (s1.length()<5){
+         			while (s1.length()<5){
+         				s1=s1+"0";
+         			}
+         			
+         		}
+         		else {
+         			s1=s1.substring(0, 5);
+         		}         		
+         		fileMetel.print(s1+s1+s1+"999999"+"3");
          		
-         		fileMetel.print(String.valueOf(row.getCell(2))+String.valueOf(row.getCell(3))+String.valueOf(row.getCell(4))+String.valueOf(row.getCell(5))+String.valueOf(row.getCell(6))+String.valueOf(row.getCell(7)));
+         		fileMetel.print(String.valueOf(row.getCell(4))+String.valueOf(row.getCell(5))+String.valueOf(row.getCell(6))+String.valueOf(row.getCell(7)));
          		fileMetel.flush();
          		fileMetel.println();
          		
