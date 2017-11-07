@@ -136,8 +136,7 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
 		mainPane.setMargin(lbl_confirmation, new Insets(0,0,50,25));
 		mainPane.setMargin(paneForTextFieldsAndLabels, new Insets(25));
 		
-		
-		
+	
 		Scene scene1 = new Scene(mainPane, 520, 500);
 		
 		btn_take_excel.requestFocus();
@@ -172,14 +171,17 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
          				} 
          			XSSFSheet spreadsheet = workbook.getSheetAt(0);
          			Row heading = spreadsheet.getRow(0);
+         			
+         		lbl_confirmation.setText("Creazione del file in corso");	
          		fileMetel = new PrintWriter(new BufferedWriter(new FileWriter("metel.TXT", true)));
+         		
          		
          		if (bot.isSelected()) {
          			fileMetel.print("LISTINO METEL       BTL01733730285BTL   "+date_start.getText()+date_start.getText()+"LISTINO GENERALE                                                     "
      						+num_catalogue.getText()+"                                                                                                         ");
          		}
          		else {
-         			fileMetel.print("LISTINO METEL       KBT01733730285BTL   "+date_start.getText()+date_start.getText()+"LISTINO GENERALE                                                     "
+         			fileMetel.print("LISTINO METEL       BTL01733730285KBT   "+date_start.getText()+date_start.getText()+"LISTINO GENERALE                                                     "
      						+num_catalogue.getText()+"                                                                                                         ");
          		}
          		fileMetel.flush();
@@ -251,7 +253,32 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
          		}         		
          		fileMetel.print(s1+s1+s1+"999999"+"3");
          		
-         		fileMetel.print(String.valueOf(row.getCell(4))+String.valueOf(row.getCell(5))+String.valueOf(row.getCell(6))+String.valueOf(row.getCell(7)));
+         		s1=df.formatCellValue(row.getCell(4));
+         		if (s1.substring(1,2).equals(",")) {
+         			s1=s1.substring(0,1)+s1.substring(2);
+         		}
+         		else if(s1.substring(2,3).equals(",")){
+         			s1=s1.substring(0,2)+s1.substring(3);
+         		}
+         		else {
+         			s1=s1.substring(0,3)+s1.substring(4);
+         		}
+         		
+         		if (s1.length()<11){
+         			while (s1.length()<11){
+         				s1="0"+s1;
+         			}
+         			
+         		}
+         		else {
+         			s1=s1.substring(0, 11);
+         		}         		
+         		fileMetel.print(s1+s1+"000001EURPCE0");
+         		
+         		s1=df.formatCellValue(row.getCell(5));
+         		fileMetel.print(s1);
+         		
+         		//fileMetel.print(String.valueOf(row.getCell(6))+String.valueOf(row.getCell(7)));
          		fileMetel.flush();
          		fileMetel.println();
          		
@@ -270,7 +297,8 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
          }
 		 
 		 fileMetel.close();
-
+		 
+		 
 	}
 	
 			
