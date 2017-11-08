@@ -6,6 +6,8 @@ import javafx.stage.FileChooser;
 import javafx.scene.*;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+
 import java.io.*;
 import javafx.event.*;
 import javafx.geometry.*;
@@ -55,7 +57,7 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
 	public void start(Stage myStage) {
 		
 		lbl_instruction = new Label();
-		lbl_instruction.setText("\n	Benvenuti nel programma Create Metel di Bot Lighting Srl.\n"
+		lbl_instruction.setText("\n	Benvenuti nel programma CreateMetelFromExcel® di Bot Lighting Srl.\n"
 				+ "\n        Il file Excel dovrà avere le seguenti colonne:\n"
 				+ "\n        • Codice prodotto\n"
 				+ "        • EAN\n"
@@ -63,20 +65,17 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
 				+ "        • Q'tà cartone\n"
 				+ "        • Prezzo al rivenditore\n"
 				+ "        • Stato prodotto\n"
-				+ "        • Famiglia di sconto\n"
-				+ "        • Electrocod (campo vuoto)\n"
-				+ "        • Barcode (campo vuoto)\n"
-				+ "        • Qualificatore Barcode (campo vuoto)\n");
+				+ "        • Famiglia di sconto\n");
 		
 		lbl_date_start = new Label("Inserisci la data inizio catalogo:");
 		date_start = new TextField();
-		date_start.setText(null);
-		date_start.setPromptText("DDMMAAAA");
+		date_start.setText("");
+		date_start.setPromptText("AAAAMMGG");
 		date_start.setMinWidth(160);
 		
 		lbl_num_catalogue = new Label("Inserisci il numero di catalogo:");
 		num_catalogue = new TextField();
-		num_catalogue.setText(null);
+		num_catalogue.setText("");
 		num_catalogue.setPromptText("Tre cifre es: 021");
 		num_catalogue.setMinWidth(160);
 		
@@ -125,21 +124,25 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
 		paneForTextFieldsAndLabels.setMargin(btn_take_excel, new Insets(20,0,0,-2));
 		paneForTextFieldsAndLabels.setMargin(btn_make_metel, new Insets(20,0,0,2));
 		
-		lbl_confirmation = new Label("Inizia inserendo i dati e il percorso del file Excel. In seguito clicca sul tasto Crea Metel.");
 		
+		lbl_confirmation = new Label("Inizia inserendo i dati e il percorso del file Excel. In seguito clicca sul tasto Crea Metel.");
+		lbl_confirmation.setId("information");
 		
 		BorderPane mainPane = new BorderPane();
 		mainPane.setTop(instruction);
 		mainPane.setLeft(paneForTextFieldsAndLabels);
 		mainPane.setBottom(lbl_confirmation);
 		mainPane.setAlignment(lbl_confirmation, Pos.BOTTOM_LEFT);
-		mainPane.setMargin(lbl_confirmation, new Insets(0,0,50,25));
+		mainPane.setMargin(lbl_confirmation, new Insets(0,0,140,25));
 		mainPane.setMargin(paneForTextFieldsAndLabels, new Insets(25));
+		mainPane.setId("cssMainPanel");
 		
 	
 		Scene scene1 = new Scene(mainPane, 520, 500);
-		
+		scene1.getStylesheets().add("application/application.css");
 		btn_take_excel.requestFocus();
+		
+		myStage.getIcons().add(new Image(Metel.class.getResourceAsStream("BotMetel.jpg")));
 		
 		myStage.setScene(scene1);
 		myStage.show();
@@ -150,7 +153,8 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
 		
 		 try {
 			 
-         	if (num_catalogue.getText()!=null && date_start.getText()!=null && (bot.isSelected() || kai.isSelected())) {
+         	if (num_catalogue.getText().length()!=0 && date_start.getText().length()!=0 && (bot.isSelected() || kai.isSelected())) {
+         		lbl_confirmation.setId("information");
          		try {
          			fileMetel = new PrintWriter("metel.TXT");
          			}
@@ -171,8 +175,7 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
          				} 
          			XSSFSheet spreadsheet = workbook.getSheetAt(0);
          			Row heading = spreadsheet.getRow(0);
-         			
-         		lbl_confirmation.setText("Creazione del file in corso");	
+         				
          		fileMetel = new PrintWriter(new BufferedWriter(new FileWriter("metel.TXT", true)));
          		
          		
@@ -278,17 +281,41 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
          		s1=df.formatCellValue(row.getCell(5));
          		fileMetel.print(s1);
          		
+         		s1=date_start.getText();
+         		fileMetel.print(s1);
+         		
+         		s1=df.formatCellValue(row.getCell(7));
+         		if (s1.length()<18){
+         			while (s1.length()<18){
+         				s1=s1+" ";
+         			}
+         			
+         		}
+         		else {
+         			s1=s1.substring(0, 18);
+         		}         		
+         		fileMetel.print(s1+s1);
+         		
+         		s1="";
+         		while (s1.length()<56) {
+         			s1=s1+" ";
+         		}
+         		fileMetel.print(s1);
+         		
+         		
+         		
          		//fileMetel.print(String.valueOf(row.getCell(6))+String.valueOf(row.getCell(7)));
          		fileMetel.flush();
          		fileMetel.println();
          		
          	}
          	lbl_confirmation.setText("File Metel.TXT creato correttamente");
+         	
          	}
          	
          	else {
+         		lbl_confirmation.setId("warningRed");
          		lbl_confirmation.setText("Mancano la data, il numero di catalogo oppure non è stato selezionato il fornitore");
-         		
          	}
          	
 		 }
