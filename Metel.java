@@ -1,5 +1,6 @@
 package application;
 
+//Imported all needed library
 import javafx.application.*;
 import javafx.stage.*;
 import javafx.stage.FileChooser;
@@ -7,7 +8,6 @@ import javafx.scene.*;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-
 import java.io.*;
 import javafx.event.*;
 import javafx.geometry.*;
@@ -22,9 +22,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.util.Iterator;
 
 
-
+//Created a class that extends Application and implements EventHandler in order to handle events.
 public class Metel extends Application implements EventHandler<ActionEvent>{
 	
+//Created all needed variables (GUI and not GUI)
 	private Desktop desktop = Desktop.getDesktop();
 	private Label lbl_instruction;
 	private Label lbl_date_start;
@@ -46,16 +47,18 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
 	
 
 	
-	
+//Started with main method as usual in Java	but it has only launch() method inside
 	public static void main(String args[]) {
 		
 		launch(args);
 		
 	}
 	
+//Overrided original start() method for JavaFx
 	@Override
 	public void start(Stage myStage) {
 		
+//Started to use all GUI JavaFx elements and put them in the Panels and then in the Scenes and then in the Stage
 		lbl_instruction = new Label();
 		lbl_instruction.setText("\n	Benvenuti nel programma CreateMetelFromExcel® di Bot Lighting Srl.\n"
 				+ "\n        Il file Excel dovrà avere le seguenti colonne:\n"
@@ -148,25 +151,31 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
 		myStage.show();
 	}
 	
+//Used handle() method of EventHandler class.
 	public void handle(ActionEvent e) {
 		
 		
 		 try {
-			 
+
+//Checked if text input areas are filled and if at least one brand is selected otherwise an error message will appears.
          	if (num_catalogue.getText().length()!=0 && date_start.getText().length()!=0 && (bot.isSelected() || kai.isSelected())) {
          		lbl_confirmation.setId("information");
          		try {
+
+//Created the new metel.txt file with relative Stream
          			fileMetel = new PrintWriter("metel.TXT");
          			}
          			catch(FileNotFoundException f) {
          				lbl_confirmation.setText("Non è stato possibile creare o scrivere nel file Metel");
          			}
+//Created a new object with path of Excel file.
          			try {
          			 fIP = new FileInputStream(fileExcel.getPath());
          			}
          			catch(FileNotFoundException g) {
          				lbl_confirmation.setText("Non è stato possibile creare o scrivere nel file Excel");
          			}
+//Started to create objects for read from Excel file: workbook, spreadsheet and row all this using ApachePOI library.
          			try {
          				workbook = new XSSFWorkbook(fIP);
          				}
@@ -175,10 +184,10 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
          				} 
          			XSSFSheet spreadsheet = workbook.getSheetAt(0);
          			Row heading = spreadsheet.getRow(0);
-         				
+//Created a PrintWriter object with metel.TXT in order to create a stream to write inside the txt file.	
          		fileMetel = new PrintWriter(new BufferedWriter(new FileWriter("metel.TXT", true)));
          		
-         		
+//Started to write data inside the txt file.
          		if (bot.isSelected()) {
          			fileMetel.print("LISTINO METEL       BTL01733730285BTL   "+date_start.getText()+date_start.getText()+"LISTINO GENERALE                                                     "
      						+num_catalogue.getText()+"                                                                                                         ");
@@ -190,8 +199,9 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
          		fileMetel.flush();
          		fileMetel.println();
          		
-         	
+ //Started to iterate inside the Excel file to extract data with an Iterator object      	
          	Iterator < Row > rowIterator = spreadsheet.iterator();
+//Created loop in order to read and write continuously data till there will be no more rows.
          	while (rowIterator.hasNext()) {
          		DataFormatter df=new DataFormatter();
          		row = (XSSFRow) rowIterator.next();
@@ -202,7 +212,7 @@ public class Metel extends Application implements EventHandler<ActionEvent>{
          			fileMetel.print("KBT");
          		}
          		String s1=df.formatCellValue(row.getCell(0));
-         		
+//
          		if (s1.length()<16){
          			while (s1.length()<16){
          				s1=s1+" ";
